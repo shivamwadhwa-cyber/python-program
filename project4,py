@@ -1,0 +1,69 @@
+
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+
+# Movie dataset
+movies = {
+    "Inception": "science fiction action thriller dream",
+    "Interstellar": "science fiction space adventure drama",
+    "Titanic": "romance love drama",
+    "Avengers": "action superhero adventure",
+    "The Notebook": "romance love emotional drama",
+    "Joker": "crime thriller drama"
+}
+
+
+# Convert movie descriptions into vectors
+vectorizer = TfidfVectorizer()
+
+movie_vectors = vectorizer.fit_transform(movies.values())
+
+
+# Calculate similarity
+similarity = cosine_similarity(movie_vectors)
+
+
+movie_names = list(movies.keys())
+
+
+# Recommendation function
+def recommend(movie):
+
+    index = movie_names.index(movie)
+
+    similarity_scores = list(enumerate(similarity[index]))
+
+    sorted_movies = sorted(
+        similarity_scores,
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+    print("\nRecommended Movies:")
+
+    count = 0
+
+    for i, score in sorted_movies:
+        if movie_names[i] != movie:
+            print(movie_names[i])
+            count += 1
+
+        if count == 3:
+            break
+
+
+# User input
+print("Available Movies:")
+for movie in movie_names:
+    print("-", movie)
+
+
+user_movie = input("\nEnter a movie name: ")
+
+if user_movie in movie_names:
+    recommend(user_movie)
+
+else:
+    print("Movie not found!")
